@@ -32,7 +32,7 @@ while True:
     # print(contours)
     hands = []
     for contour in contours:
-        if 5000 <= cv2.contourArea(contour):
+        if 2000 <= cv2.contourArea(contour):
             cv2.drawContours(frame, [contour], 0, (127, 127, 127), 3)
             hull_shape = cv2.convexHull(contour, returnPoints=True)
             # print(hull_shape)
@@ -85,7 +85,12 @@ while True:
         break
     elif k % 256 == 32:
         # SPACE pressed
-        img_name = "opencv_frame_{}.png".format(img_counter)
+        img_name = f"images/opencv_frame_{img_counter}.png"
+        hand_name = f"images/opencv_frame_%d_hand_%d.png"
         cv2.imwrite(img_name, frame)
-        print("{} written!".format(img_name))
+
+        for hand_index in range(len(hands)):
+            x, y, w, h = hands[hand_index]
+            cv2.imwrite(hand_name%(img_counter, hand_index), contour_masked[y:y + h, x:x + w])
+        print(f"{img_name} written!")
         img_counter += 1
