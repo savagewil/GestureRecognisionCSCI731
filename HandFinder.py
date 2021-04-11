@@ -38,13 +38,14 @@ class HandFinder:
                             start = tuple(contour[point[0, 0]][0])
                             end = tuple(contour[point[0, 1]][0])
                             dist = np.sqrt((start[0] - end[0]) ** 2 + (start[1] - end[1]) ** 2)
-                            print(f"norm{dist}")
+                            #print(f"norm{dist}")
                             if dist > 3:
                                 cv2.line(frame_copy, start, end, [255, 0, 0], 5)
                                 cv2.circle(frame_copy, defect, 5, [0, 0, 255], -1)
                 except Exception as e:
                     print("defects failed")
                     print(e)
-                hands.append(cv2.boundingRect(contour))
-
+                x,y,w,h = cv2.boundingRect(contour)
+                #print("test")
+                hands.append(hand_mask[y:y+h, x:x+w])
         return frame_copy, hands
