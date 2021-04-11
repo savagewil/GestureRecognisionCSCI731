@@ -36,7 +36,7 @@ def prediction_to_class_str(pred):
     classes = {0 : "palm", 1 : "L", 2 : "fist", 3 : "fist_moved", 4 : "thumb", 5 : "index", 6 : "ok", 7 : "palm_moved", 8 : "c", 9 : "down"}
     return classes[pred]
 
-def classify_arbitrary_image(model, img):
+def classify_arbitrary_image(model, img, transpose=False):
     device = torch.device('cuda')
     img_type = type(img)
     if img_type == torch.Tensor:
@@ -45,14 +45,17 @@ def classify_arbitrary_image(model, img):
         img = img.unsqueeze(1)
     elif img_type == np.ndarray:
         #print("np array")
-        img = img.transpose((2, 0, 1))
+        # in some cases, we want to swap the order of the channels. In other cases, we don't
+        if transpose:
+            img = img.transpose((2, 0, 1))
         img = np.expand_dims(img, 1)
         img = img.astype(np.float32)
         img = torch.from_numpy(img)
     else:
         print("error: something other than a torch.Tensor or an np.ndarray was passed as img")
     img = img.to(device=device)
-    prediction = model(img)
+    with torch.no_grad():
+        prediction = model(img)
     prediction = prediction.cpu().data.numpy()
     y_hat = np.argmax(prediction, axis=1)
     return prediction_to_class_str(y_hat[0])

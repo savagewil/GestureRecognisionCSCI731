@@ -14,10 +14,11 @@ async def classify_img(model, img):
 async def show_classified_hands(model, hands):
     for idx, hand in enumerate(hands):
         try:
-            resized_hand = reshape_img(np.array([hand]), (256,256))
+            resized_hand = reshape_img(hand, (256,256))
+            resized_hand = np.array([resized_hand])
             window_name = await asyncio.gather(classify_img(model, resized_hand))
             cv2.imshow(window_name[0], hand)
-        except Exception as e:
+        except cv2.error as e:
             print(str(e))
 
 
@@ -28,7 +29,6 @@ def run_demo(model):
         ret, frame = cap.read()
         imgs, hands = hand_finder.extractHands(frame)
         cv2.imshow('frame', frame)
-        # slows down program to a crawl b/c it eats the entire gpu lol
         asyncio.run(show_classified_hands(model, hands))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -42,6 +42,7 @@ def main():
     loaded_model = HandNNModel()
     loaded_model.load_state_dict(torch.load(save_path))
     loaded_model = loaded_model.to(device=device)
+    loaded_model.eval()
     run_demo(loaded_model)
 
 if __name__ == "__main__":
