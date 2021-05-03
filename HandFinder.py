@@ -12,6 +12,7 @@ class HandFinder:
         frame_copy = frame.copy()
 
         hands = []
+        hand_rect = []
         for contour in contours:
             if 2000 <= cv2.contourArea(contour):
                 cv2.drawContours(frame_copy, [contour], 0, (127, 127, 127), 3)
@@ -48,4 +49,5 @@ class HandFinder:
                 x,y,w,h = cv2.boundingRect(contour)
                 #print("test")
                 hands.append(hand_mask[y:y+h, x:x+w])
-        return frame_copy, hands
+                hand_rect.append((x,y,w,h))
+        return frame_copy, hands, hand_rect
