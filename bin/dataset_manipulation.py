@@ -36,6 +36,38 @@ class KaggleHandDetectionDataset(Dataset):
         return sample
 
 
+class AslGestureDataset(Dataset):
+    """Custom loader for the Kaggle Hand Detection Dataset"""
+
+    def __init__(self, csv_file, transforms=None):
+        """
+        Args:
+            csv_file (string): Path to the csv file with image filepaths and gt classes
+            transforms (callable, optional): Optional transforms to be applied on a sample
+        """
+        self.images_frame = pd.read_csv(csv_file)
+        self.transforms = transforms
+
+    def __len__(self):
+        return len(self.images_frame)
+
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        img_name = self.images_frame.iloc[idx, 0]
+        # print(img_name)
+        img = cv2.imread(img_name)
+        y = (self.images_frame.iloc[idx, 1])
+        # normalize to 0-26 for classes (missing j and z b/c dynamic)
+        y = ord(y) - ord('a')
+        sample = {'image': img, 'y': y, 'fname': img_name}
+
+        if len(self.transforms) > 0:
+            for _, transform in enumerate(self.transforms):
+                sample = transform(sample)
+        return sample
+
 class Rescale(object):
     """Used to rescale an image to a given size. Useful for the CNN
 
