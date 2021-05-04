@@ -84,6 +84,7 @@ def main(out_path, flip):
 
 if __name__ == "__main__":
 
-    flip = len(sys.argv) >= 2 and  "-f" in sys.argv
-    save_path = "../images/LiveDemoCaptures/"
+    flip = "-f" in sys.argv
+    record = "-r" in sys.argv
+    save_path = "../images/LiveDemoCaptures/" if record else None
     main(save_path, flip)
