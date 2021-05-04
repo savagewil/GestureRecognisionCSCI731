@@ -71,8 +71,9 @@ def main(image_path, out_path, flip=False):
     device = torch.device('cuda')
     alexnet_model = get_alexnet_model()
     print(alexnet_model.eval())
-    save_path = "../data/asl/Asl_AdamNet_tl.pkl"
-    print(alexnet_model.load_state_dict(torch.load(save_path)))
+    save_path = "../Models/trained_test_cnn.pkl"
+    data = torch.load(save_path)
+    print(alexnet_model.load_state_dict(data))
     alexnet_model.eval()
     alexnet_model.cuda(device=device)
     labeled = run_demo(alexnet_model, asl_prediction_to_class_str, image_path, flip)

@@ -71,7 +71,7 @@ def main(out_path, flip):
     device = torch.device('cuda')
     alexnet_model = get_alexnet_model()
     print(alexnet_model.eval())
-    save_path = "../data/asl/Asl_AdamNet_tl.pkl"
+    save_path = "../Models/Asl_AdamNet_tl.pkl"
     print(alexnet_model.load_state_dict(torch.load(save_path)))
     alexnet_model.eval()
     alexnet_model.cuda(device=device)
