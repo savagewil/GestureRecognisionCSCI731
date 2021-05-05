@@ -48,6 +48,13 @@ class HandFinder:
                     print(e)
                 x,y,w,h = cv2.boundingRect(contour)
                 #print("test")
-                hands.append(hand_mask[y:y+h, x:x+w])
+                hand = hand_mask[y:y+h, x:x+w]
+                h_margin = int(h * 0.4)
+                w_margin = int(w * 0.4)
+                hand = cv2.copyMakeBorder(hand, h_margin, h_margin, w_margin, w_margin, cv2.BORDER_CONSTANT, None, [0,0,0])
+                hand = cv2.morphologyEx(hand, cv2.MORPH_DILATE, cv2.getStructuringElement(cv2.MORPH_RECT, (20,20)))
+                # hand_back = np.zeros(tuple(np.int(np.array(hand.shape) * np.array([1.2,1.2,1.0]))))
+                # hand_back[int(h)]
+                hands.append(hand)
                 hand_rect.append((x,y,w,h))
         return frame_copy, hands, hand_rect

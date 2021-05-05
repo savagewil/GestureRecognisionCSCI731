@@ -31,6 +31,7 @@ def classify_hands(model, hands, pred_fn):
             resized_hand = reshape_img(hand, (256, 256))
             resized_hand = np.array([resized_hand])
             label = classify_img(model, resized_hand, pred_fn)
+            cv2.imwrite("hands/"+label+".png", resized_hand[0])
             labels.append(label.upper())
         except cv2.error as e:
             print(str(e))
@@ -71,7 +72,8 @@ def main(image_path, out_path, flip=False):
     device = torch.device('cuda')
     alexnet_model = get_alexnet_model()
     print(alexnet_model.eval())
-    save_path = "../Models/trained_test_cnn.pkl"
+    save_path = "../Models/Asl_AdamNet_rotated.pkl"
+
     data = torch.load(save_path)
     print(alexnet_model.load_state_dict(data))
     alexnet_model.eval()
